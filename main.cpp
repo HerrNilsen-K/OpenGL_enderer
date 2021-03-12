@@ -89,22 +89,33 @@ void processInput(GLFWwindow *window) {
 
 }
 
+float fov = 45;
+
 std::array<glm::vec3, 3> getCam() {
     static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -1}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        result[0].z += 2.5 * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        result[0].z -= 2.5 * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        result[0].y += 2.5 * deltaTime;
+        result[1].y += 2.5 * deltaTime;
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        result[0].y -= 2.5 * deltaTime;
+        result[1].y -= 2.5 * deltaTime;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         result[0].x += 2.5 * deltaTime;
         result[1].x += 2.5 * deltaTime;
     }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         result[0].x -= 2.5 * deltaTime;
         result[1].x -= 2.5 * deltaTime;
     }
+
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        fov = 45;
+
     return result;
 }
+
 
 int main() {
     glfwInit();
@@ -114,6 +125,12 @@ int main() {
         glViewport(0, 0, w, h);
     });
     glfwSwapInterval(1);
+    glfwSetScrollCallback(window, [](GLFWwindow *win, double x, double y) {
+        if (y > 0)
+            fov--;
+        else if (y < 0)
+            fov++;
+    });
     glewInit();
 
     glEnable(GL_DEBUG_OUTPUT);
@@ -149,7 +166,7 @@ int main() {
     //mat = glm::scale(mat, glm::vec3(1.5, 1.5, 0));
     glm::mat4x4 model(1.0f), projection(1.0f);
 
-    projection = glm::perspective(glm::radians(45.0f), 400.0f / 400.0f, 0.1f, 100.0f);
+
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -162,6 +179,7 @@ int main() {
         tex.bind();
         sh.use();
         //model = glm::ortho(-1, 1, -1, 1, -1, 1);
+        projection = glm::perspective(glm::radians(fov), 400.0f / 400.0f, 0.1f, 100.0f);
 
         sh.uniform("model", model);
         processInput(window);
