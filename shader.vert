@@ -5,10 +5,11 @@ layout(location = 1) in vec2 aTexPos;
 
 uniform mat4 model;
 uniform mat4 view;
+uniform mat4 projection;
 
 out vec2 texPos;
 
 void main(){
-	gl_Position =   view * model * vec4(position, 0, 1);
+	gl_Position =   projection * view * model * vec4(position, 0, 1);
 	texPos = aTexPos;
 }

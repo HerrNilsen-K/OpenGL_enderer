@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <cmath>
 #include <dialog.h>
+#include <array>
 #include "src/buffer.hpp"
 #include "src/vertexArray.hpp"
 #include "src/shader.hpp"
@@ -88,6 +89,23 @@ void processInput(GLFWwindow *window) {
 
 }
 
+std::array<glm::vec3, 3> getCam() {
+    static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -1}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        result[0].z += 2.5 * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        result[0].z -= 2.5 * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+        result[0].x += 2.5 * deltaTime;
+        result[1].x += 2.5 * deltaTime;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        result[0].x -= 2.5 * deltaTime;
+        result[1].x -= 2.5 * deltaTime;
+    }
+    return result;
+}
+
 int main() {
     glfwInit();
     window = glfwCreateWindow(400, 400, "Test", nullptr, nullptr);
@@ -129,7 +147,9 @@ int main() {
     //mat = glm::rotate(mat, glm::degrees(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     //mat = glm::translate(mat, glm::vec3(0.5, 0, 0));
     //mat = glm::scale(mat, glm::vec3(1.5, 1.5, 0));
+    glm::mat4x4 model(1.0f), projection(1.0f);
 
+    projection = glm::perspective(glm::radians(45.0f), 400.0f / 400.0f, 0.1f, 100.0f);
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -141,15 +161,18 @@ int main() {
         vao.bind();
         tex.bind();
         sh.use();
-        glm::mat4x4 model(1.0f);
         //model = glm::ortho(-1, 1, -1, 1, -1, 1);
 
-        //model *= glm::translate(glm::mat4(1.0), glm::vec3(std::sin(glfwGetTime()), 0, 0));
-        model = glm::ortho(-1.5, 1., -1., 1.);
         sh.uniform("model", model);
         processInput(window);
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        std::array<glm::vec3, 3> cam = getCam();
+        view = glm::lookAt(
+                cam[0],
+                cam[1],
+                cam[2]
+        );
         sh.uniform("view", view);
+        sh.uniform("projection", projection);
         ebo.bind();
 
         glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(*indicies), GL_UNSIGNED_INT, 0);
