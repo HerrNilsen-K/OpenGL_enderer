@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include "shader.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 shader::shader() {
     m_program = glCreateProgram();
@@ -62,7 +63,7 @@ void shader::uniform(const std::string_view &location, float p1, float p2, float
 
 void shader::uniform(const std::string_view &location, const glm::mat4 &mat) {
     use();
-    glUniformMatrix4fv(glGetUniformLocation(m_program, location.data()), 1, false, &mat[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(m_program, location.data()), 1, false, glm::value_ptr(mat));
 }
 
 void shader::attachShaderFile(const std::string_view &vertexFilePath, const std::string_view &fragmentFilePath) {
@@ -81,6 +82,8 @@ void shader::attachShaderFile(const std::string_view &vertexFilePath, const std:
     attachShader(vertexSource.str(), fragmentSource.str());
 }
 
-void shader::uniform(const std::string_view &location, const camera &cam) {
-    uniform(location, cam.getView());
+void shader::uniform(const camera &cam) {
+    uniform("model", cam.getModel());
+    uniform("view", cam.getView());
+    uniform("projection", cam.getProjection());
 }

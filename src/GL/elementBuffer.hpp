@@ -16,11 +16,14 @@ public:
 
     void bind();
 
+    uint32_t getIndiciesSize() const;
+
     ~elementBuffer();
 
 
 private:
     uint32_t m_elementBuffer;
+    uint32_t m_indiciesSize;
 };
 
 

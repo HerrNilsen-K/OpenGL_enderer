@@ -5,7 +5,6 @@
 #ifndef INC_3CARDRENDERER_BUFFER_HPP
 #define INC_3CARDRENDERER_BUFFER_HPP
 
-#include <GLFW/glfw3.h>
 #include <any>
 
 class buffer {

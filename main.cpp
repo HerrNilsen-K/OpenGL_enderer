@@ -4,8 +4,7 @@
 
 #include <iostream>
 #include <GL/glew.h>
-#include <cmath>
-#include <dialog.h>
+#include <GLFW/glfw3.h>
 #include <array>
 #include "src/GL/buffer.hpp"
 #include "src/GL/vertexArray.hpp"
@@ -13,6 +12,7 @@
 #include "src/GL/elementBuffer.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "src/GL/texture.hpp"
+#include "src/mesh.hpp"
 
 using namespace std;
 
@@ -153,6 +153,7 @@ int main() {
     glm::mat4x4 model(1.0f), projection(1.0f);
     camera cam;
 
+    mesh m(vbo, ebo, vao, sh);
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
@@ -161,22 +162,23 @@ int main() {
 
         glfwSwapBuffers(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        vbo.bind();
-        vao.bind();
-        tex.bind();
-        sh.use();
         //model = glm::ortho(-1, 1, -1, 1, -1, 1);
         projection = glm::perspective(glm::radians(fov), 400.0f / 400.0f, 0.1f, 100.0f);
+        cam.updateProjection(projection);
 
-        sh.uniform("model", model);
+        //sh.uniform("model", model);
+        float rot = glfwGetTime();
+        model = glm::rotate(model, glm::degrees(rot), glm::vec3(0, 0, 1));
+        cam.updateModel(model);
         std::array<glm::vec3, 3> camV = getCam(window);
-        cam.update(camV[0], camV[1], camV[2]);
+        cam.updateView(camV[0], camV[1], camV[2]);
 
-        sh.uniform("view", cam);
-        sh.uniform("projection", projection);
-        ebo.bind();
+        //sh.uniform(cam);
+        //sh.uniform("projection", projection);
 
-        glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(*indicies), GL_UNSIGNED_INT, 0);
+        m.update(cam);
+        m.render();
+        //glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(*indicies), GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();
     }

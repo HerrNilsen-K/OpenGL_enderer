@@ -21,7 +21,7 @@ public:
     void uniform(const std::string_view &location, float p1);
     void uniform(const std::string_view &location, float p1, float p2, float p3);
     void uniform(const std::string_view &location, const glm::mat4 &mat);
-    void uniform(const std::string_view &location, const camera &cam);
+    void uniform(const camera &cam);
 
     ~shader();
 
