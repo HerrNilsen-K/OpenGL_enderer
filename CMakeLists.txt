@@ -3,7 +3,7 @@ project(3cardRenderer)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(${PROJECT_NAME} src/buffer.cpp src/buffer.hpp src/vertexArray.cpp src/vertexArray.hpp src/shader.cpp src/shader.hpp src/elementBuffer.cpp src/elementBuffer.hpp src/texture.cpp src/texture.hpp)
+add_library(${PROJECT_NAME} src/GL/buffer.cpp src/GL/buffer.hpp src/GL/vertexArray.cpp src/GL/vertexArray.hpp src/GL/shader.cpp src/GL/shader.hpp src/GL/elementBuffer.cpp src/GL/elementBuffer.hpp src/GL/texture.cpp src/GL/texture.hpp src/GL/camera.cpp src/GL/camera.hpp src/mesh.cpp src/mesh.hpp)
 
 add_executable(program main.cpp)
 

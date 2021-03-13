@@ -7,12 +7,12 @@
 #include <cmath>
 #include <dialog.h>
 #include <array>
-#include "src/buffer.hpp"
-#include "src/vertexArray.hpp"
-#include "src/shader.hpp"
-#include "src/elementBuffer.hpp"
+#include "src/GL/buffer.hpp"
+#include "src/GL/vertexArray.hpp"
+#include "src/GL/shader.hpp"
+#include "src/GL/elementBuffer.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "src/texture.hpp"
+#include "src/GL/texture.hpp"
 
 using namespace std;
 
@@ -66,32 +66,18 @@ void APIENTRY openglCallbackFunction(GLenum source,
     cout << "---------------------opengl-callback-end--------------" << endl;
 }
 
-GLFWwindow *window;
 
 float deltaTime = 0.0f;    // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
-glm::mat4 view(1.0f);
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-void processInput(GLFWwindow *window) {
-    const float cameraSpeed = 2.5 * deltaTime; // adjust accordingly
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos.x -= cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos.x += cameraSpeed;
-
-}
 
 float fov = 45;
 
-std::array<glm::vec3, 3> getCam() {
+std::array<glm::vec3, 3> getCam(GLFWwindow *window) {
     static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -1}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         result[0].y += 2.5 * deltaTime;
@@ -119,7 +105,7 @@ std::array<glm::vec3, 3> getCam() {
 
 int main() {
     glfwInit();
-    window = glfwCreateWindow(400, 400, "Test", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(400, 400, "Test", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
@@ -165,6 +151,7 @@ int main() {
     //mat = glm::translate(mat, glm::vec3(0.5, 0, 0));
     //mat = glm::scale(mat, glm::vec3(1.5, 1.5, 0));
     glm::mat4x4 model(1.0f), projection(1.0f);
+    camera cam;
 
 
     while (!glfwWindowShouldClose(window)) {
@@ -182,14 +169,10 @@ int main() {
         projection = glm::perspective(glm::radians(fov), 400.0f / 400.0f, 0.1f, 100.0f);
 
         sh.uniform("model", model);
-        processInput(window);
-        std::array<glm::vec3, 3> cam = getCam();
-        view = glm::lookAt(
-                cam[0],
-                cam[1],
-                cam[2]
-        );
-        sh.uniform("view", view);
+        std::array<glm::vec3, 3> camV = getCam(window);
+        cam.update(camV[0], camV[1], camV[2]);
+
+        sh.uniform("view", cam);
         sh.uniform("projection", projection);
         ebo.bind();
 

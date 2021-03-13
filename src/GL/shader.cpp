@@ -80,3 +80,7 @@ void shader::attachShaderFile(const std::string_view &vertexFilePath, const std:
 
     attachShader(vertexSource.str(), fragmentSource.str());
 }
+
+void shader::uniform(const std::string_view &location, const camera &cam) {
+    uniform(location, cam.getView());
+}
