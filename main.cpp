@@ -151,7 +151,7 @@ int main() {
     //mat = glm::translate(mat, glm::vec3(0.5, 0, 0));
     //mat = glm::scale(mat, glm::vec3(1.5, 1.5, 0));
     glm::mat4x4 model(1.0f), projection(1.0f);
-    camera cam;
+    camera cam(model, glm::mat4(1.f), projection);
 
     mesh m(vbo, ebo, vao, sh);
 
@@ -162,14 +162,10 @@ int main() {
 
         glfwSwapBuffers(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //model = glm::ortho(-1, 1, -1, 1, -1, 1);
-        projection = glm::perspective(glm::radians(fov), 400.0f / 400.0f, 0.1f, 100.0f);
-        cam.updateProjection(projection);
 
-        //sh.uniform("model", model);
-        float rot = glfwGetTime();
-        model = glm::rotate(model, glm::degrees(rot), glm::vec3(0, 0, 1));
-        cam.updateModel(model);
+        cam.updateProjection(fov);
+        float rot = deltaTime / 10;
+        model *= glm::rotate(glm::mat4(1.f), glm::degrees(rot), glm::vec3(0, 0, 1));
         std::array<glm::vec3, 3> camV = getCam(window);
         cam.updateView(camV[0], camV[1], camV[2]);
 
