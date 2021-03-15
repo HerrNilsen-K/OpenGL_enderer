@@ -78,7 +78,7 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float fov = 45;
 
 std::array<glm::vec3, 3> getCam(GLFWwindow *window) {
-    static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -1}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
+    static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -4}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         result[0].y += 2.5 * deltaTime;
         result[1].y += 2.5 * deltaTime;
@@ -151,6 +151,8 @@ int main() {
     //mat = glm::translate(mat, glm::vec3(0.5, 0, 0));
     //mat = glm::scale(mat, glm::vec3(1.5, 1.5, 0));
     glm::mat4x4 model(1.0f), projection(1.0f);
+    glm::mat4 model2(1.f);
+    model2 = glm::translate(model2, glm::vec3(2, 0, 0));
     camera cam(model, glm::mat4(1.f), projection);
 
     mesh m(vbo, ebo, vao, sh);
@@ -172,6 +174,10 @@ int main() {
         //sh.uniform(cam);
         //sh.uniform("projection", projection);
 
+        cam.updateModel(model);
+        m.update(cam);
+        m.render();
+        cam.updateModel(model2);
         m.update(cam);
         m.render();
         //glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(*indicies), GL_UNSIGNED_INT, 0);
