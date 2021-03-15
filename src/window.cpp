@@ -38,3 +38,11 @@ void window::destroyWindow() {
 bool window::run() const {
     return glfwWindowShouldClose(m_win);
 }
+
+window::windowHNDL window::getHNDL() const {
+    return m_win;
+}
+
+int window::getKey(int key) const {
+    return glfwGetKey(m_win, key);
+}

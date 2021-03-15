@@ -10,6 +10,8 @@
 
 class window {
 public:
+    typedef GLFWwindow *windowHNDL;
+
     static void init();
 
     explicit window(uint32_t width = 640, uint32_t height = 480, std::string title = "Hello Window");
@@ -20,10 +22,13 @@ public:
 
     [[nodiscard]] bool run() const;
 
+    [[nodiscard]] windowHNDL getHNDL() const;
+
+    [[nodiscard]] int getKey(int key) const;
+
     ~window();
 
 private:
-    typedef GLFWwindow *windowHNDL;
     windowHNDL m_win;
 
     uint32_t m_width, m_height;

@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <array>
+#include <memory>
 #include "src/GL/buffer.hpp"
 #include "src/GL/vertexArray.hpp"
 #include "src/GL/shader.hpp"
@@ -75,29 +76,28 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-
 float fov = 45;
 
-std::array<glm::vec3, 3> getCam(GLFWwindow *window) {
+std::array<glm::vec3, 3> getCam(window &win) {
     static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -4}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    if (win.getKey(GLFW_KEY_W) == GLFW_PRESS) {
         result[0].y += 2.5 * deltaTime;
         result[1].y += 2.5 * deltaTime;
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    if (win.getKey(GLFW_KEY_S) == GLFW_PRESS) {
         result[0].y -= 2.5 * deltaTime;
         result[1].y -= 2.5 * deltaTime;
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (win.getKey(GLFW_KEY_A) == GLFW_PRESS) {
         result[0].x += 2.5 * deltaTime;
         result[1].x += 2.5 * deltaTime;
     }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (win.getKey(GLFW_KEY_D) == GLFW_PRESS) {
         result[0].x -= 2.5 * deltaTime;
         result[1].x -= 2.5 * deltaTime;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    if (win.getKey(GLFW_KEY_E) == GLFW_PRESS)
         fov = 45;
 
     return result;
@@ -108,14 +108,11 @@ int main() {
     window::init();
     window win;
     win.createWindow();
-    glfwInit();
-    GLFWwindow *window = glfwCreateWindow(400, 400, "Test", nullptr, nullptr);
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *win, int w, int h) {
+    glfwSetFramebufferSizeCallback(win.getHNDL(), [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
     });
     glfwSwapInterval(1);
-    glfwSetScrollCallback(window, [](GLFWwindow *win, double x, double y) {
+    glfwSetScrollCallback(win.getHNDL(), [](GLFWwindow *win, double x, double y) {
         if (y > 0)
             fov--;
         else if (y < 0)
@@ -161,18 +158,18 @@ int main() {
 
     mesh m(vbo, ebo, vao, sh);
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!win.run()) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         cam.updateProjection(fov);
         float rot = deltaTime / 10;
         model *= glm::rotate(glm::mat4(1.f), glm::degrees(rot), glm::vec3(0, 0, 1));
-        std::array<glm::vec3, 3> camV = getCam(window);
+        std::array<glm::vec3, 3> camV = getCam(win);
         cam.updateView(camV[0], camV[1], camV[2]);
 
         //sh.uniform(cam);
@@ -189,7 +186,5 @@ int main() {
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
     return 0;
 }
