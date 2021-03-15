@@ -13,6 +13,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "src/GL/texture.hpp"
 #include "src/mesh.hpp"
+#include "src/window.hpp"
 
 using namespace std;
 
@@ -104,6 +105,9 @@ std::array<glm::vec3, 3> getCam(GLFWwindow *window) {
 
 
 int main() {
+    window::init();
+    window win;
+    win.createWindow();
     glfwInit();
     GLFWwindow *window = glfwCreateWindow(400, 400, "Test", nullptr, nullptr);
     glfwMakeContextCurrent(window);
