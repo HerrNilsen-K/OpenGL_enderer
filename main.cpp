@@ -142,9 +142,10 @@ int main() {
     vao.data(1, 2, GL_FLOAT, sizeof(float) * 4, (void *) (sizeof(float) * 2));
     elementBuffer ebo;
     ebo.data(sizeof(indicies), indicies);
-    texture tex;
-    tex.image(R"(../test.png)");
+    texture tex, tex2;
 
+    tex.image(R"(../test.png)", 0);
+    tex2.image(R"(../test2.png)", 1);
 
     shader sh;
     sh.attachShaderFile(R"(../shader.vert)", R"(../shader.frag)");
@@ -155,6 +156,8 @@ int main() {
     glm::mat4 model2(1.f);
     model2 = glm::translate(model2, glm::vec3(2, 0, 0));
     camera cam(model, glm::mat4(1.f), projection);
+    sh.uniform("tex", 0);
+    sh.uniform("tex2", 1);
 
     mesh m(vbo, ebo, vao, sh);
 
@@ -175,9 +178,13 @@ int main() {
         //sh.uniform(cam);
         //sh.uniform("projection", projection);
 
+        tex.activate(0);
+        tex.bind();
         cam.updateModel(model);
         m.update(cam);
         m.render();
+        tex2.activate(1);
+        tex2.bind();
         cam.updateModel(model2);
         m.update(cam);
         m.render();

@@ -13,9 +13,11 @@ class texture {
 public:
     texture();
 
-    void image(const std::string_view &path);
+    void image(const std::string_view &path, uint8_t activeIndex = 0);
 
     void bind();
+
+    void activate(uint8_t index) const;
 
     ~texture();
 

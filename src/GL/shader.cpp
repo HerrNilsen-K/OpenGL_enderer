@@ -87,3 +87,8 @@ void shader::uniform(const camera &cam) {
     uniform("view", cam.getView());
     uniform("projection", cam.getProjection());
 }
+
+void shader::uniform(const std::string_view &location, int p1) {
+    use();
+    glUniform1i(glGetUniformLocation(m_program, location.data()), p1);
+}

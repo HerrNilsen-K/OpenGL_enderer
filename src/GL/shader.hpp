@@ -18,6 +18,7 @@ public:
     void attachShader(const std::string_view &vertexShaderSource, const std::string_view &fragmentShaderSource);
     void attachShaderFile(const std::string_view &vertexFilePath, const std::string_view &fragmentFilePath);
 
+    void uniform(const std::string_view &location, int p1);
     void uniform(const std::string_view &location, float p1);
     void uniform(const std::string_view &location, float p1, float p2, float p3);
     void uniform(const std::string_view &location, const glm::mat4 &mat);

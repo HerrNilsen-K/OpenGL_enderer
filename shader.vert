@@ -10,6 +10,6 @@ uniform mat4 projection;
 out vec2 texPos;
 
 void main(){
-	gl_Position =   projection * view * model * vec4(position, 0, 1);
-	texPos = aTexPos;
+    gl_Position = projection * view * model * vec4(position, 0, 1);
+    texPos = aTexPos;
 }
