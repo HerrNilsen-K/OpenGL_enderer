@@ -74,7 +74,7 @@ float lastFrame = 0.0f; // Time of last frame
 
 int main() {
     window::init();
-    window win(640, 480);
+    window win(600, 600);
     win.createWindow();
     glfwSetFramebufferSizeCallback(win.getHNDL(), [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
@@ -86,6 +86,11 @@ int main() {
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
     sprite player(win);
+    player.stepX(2);
+
+    sprite dummy(win);
+    dummy.getCam().updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(.5, .5, 1))) *
+                               glm::mat4(glm::translate(dummy.getCam().getModel(), glm::vec3(3, 3, 1))));
 
 
     while (!win.run()) {
@@ -96,8 +101,8 @@ int main() {
         glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
         player.render();
+        dummy.render();
 
 
         glfwPollEvents();

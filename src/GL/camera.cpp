@@ -24,7 +24,8 @@ void camera::updateModel(const glm::mat4 &model) {
 
 void camera::updateProjection(float fov) {
     m_fov = fov;
-    m_projection = glm::perspective(glm::radians(m_fov), m_aspectX / m_aspectY, m_zNear, m_zFar);
+    //m_projection = glm::perspective(glm::radians(m_fov), m_aspectX / m_aspectY, m_zNear, m_zFar);
+    m_projection = glm::ortho(0.f,1.f, 0.f,1.f, -1.f, 1.f);
 }
 
 glm::mat4 camera::getModel() const {
