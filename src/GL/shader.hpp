@@ -11,12 +11,18 @@
 #include "glm/glm.hpp"
 #include "camera.hpp"
 
+struct shaderPath {
+    std::string_view svertex;
+    std::string_view sfragment;
+};
+
 class shader {
 public:
     shader();
     void use();
     void attachShader(const std::string_view &vertexShaderSource, const std::string_view &fragmentShaderSource);
     void attachShaderFile(const std::string_view &vertexFilePath, const std::string_view &fragmentFilePath);
+    void attachShaderFile(const shaderPath &shaderPath);
 
     void uniform(const std::string_view &location, int p1);
     void uniform(const std::string_view &location, float p1);

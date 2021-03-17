@@ -26,6 +26,9 @@ public:
     void updateView(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &up);
     void updateProjection(float fov);
 
+    void updateAspect(float x, float y);
+    void updateAspect(uint16_t x, uint16_t y);
+
     glm::mat4 getModel() const;
     glm::mat4 getView() const;
     glm::mat4 getProjection() const;

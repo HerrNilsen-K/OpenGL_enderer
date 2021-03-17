@@ -14,7 +14,8 @@
 
 class mesh {
 public:
-    mesh(const buffer &vbo, const elementBuffer &ebo, const vertexArray &vao, const shader &sh);
+    mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderPath &sh,
+         uint8_t vaoCount = 1);
 
     void update(const camera &cam);
 

@@ -15,6 +15,7 @@
 #include "src/GL/texture.hpp"
 #include "src/mesh.hpp"
 #include "src/window.hpp"
+#include "sprite.hpp"
 
 using namespace std;
 
@@ -68,98 +69,24 @@ void APIENTRY openglCallbackFunction(GLenum source,
     cout << "---------------------opengl-callback-end--------------" << endl;
 }
 
-
 float deltaTime = 0.0f;    // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-float fov = 45;
-
-std::array<glm::vec3, 3> getCam(window &win) {
-    static std::array<glm::vec3, 3> result{glm::vec3{0, 0, -4}, glm::vec3{0, 0, 0}, glm::vec3{0, 1, 0}};
-    if (win.getKey(GLFW_KEY_W) == GLFW_PRESS) {
-        result[0].y += 2.5 * deltaTime;
-        result[1].y += 2.5 * deltaTime;
-    }
-    if (win.getKey(GLFW_KEY_S) == GLFW_PRESS) {
-        result[0].y -= 2.5 * deltaTime;
-        result[1].y -= 2.5 * deltaTime;
-    }
-    if (win.getKey(GLFW_KEY_A) == GLFW_PRESS) {
-        result[0].x += 2.5 * deltaTime;
-        result[1].x += 2.5 * deltaTime;
-    }
-    if (win.getKey(GLFW_KEY_D) == GLFW_PRESS) {
-        result[0].x -= 2.5 * deltaTime;
-        result[1].x -= 2.5 * deltaTime;
-    }
-
-    if (win.getKey(GLFW_KEY_E) == GLFW_PRESS)
-        fov = 45;
-
-    return result;
-}
-
-
 int main() {
     window::init();
-    window win;
+    window win(640, 480);
     win.createWindow();
     glfwSetFramebufferSizeCallback(win.getHNDL(), [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
     });
     glfwSwapInterval(1);
-    glfwSetScrollCallback(win.getHNDL(), [](GLFWwindow *win, double x, double y) {
-        if (y > 0)
-            fov--;
-        else if (y < 0)
-            fov++;
-    });
     glewInit();
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
-    float data[] = {
-            -0.5, 0.5, 0, 1,
-            0.5, 0.5, 1, 1,
-            -0.5, -0.5, 0, 0,
-            0.5, -0.5, 1, 0
-    };
+    sprite player(win);
 
-    unsigned int indicies[] = {
-            0, 1, 2,
-            1, 2, 3
-    };
-
-    buffer vbo;
-    vbo.data(sizeof(data), data);
-    vertexArray vao;
-    vao.data(0, 2, GL_FLOAT, sizeof(float) * 4, 0);
-    vao.data(1, 2, GL_FLOAT, sizeof(float) * 4, (void *) (sizeof(float) * 2));
-    elementBuffer ebo;
-    ebo.data(sizeof(indicies), indicies);
-    texture tex, tex2;
-
-    tex.image(R"(../test.png)", 0);
-    tex2.image(R"(../test2.png)", 1);
-
-    shader sh;
-    sh.attachShaderFile(R"(../shader.vert)", R"(../shader.frag)");
-    //mat = glm::rotate(mat, glm::degrees(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    //mat = glm::translate(mat, glm::vec3(0.5, 0, 0));
-    //mat = glm::scale(mat, glm::vec3(1.5, 1.5, 0));
-    glm::mat4x4 model(1.0f), projection(1.0f);
-    glm::mat4 model2(1.f);
-    model2 = glm::translate(model2, glm::vec3(2, 0, 0));
-    camera cam(model, glm::mat4(1.f), projection);
-    sh.uniform("tex", 0);
-    sh.uniform("tex2", 1);
-
-    mesh m(vbo, ebo, vao, sh);
 
     while (!win.run()) {
         float currentFrame = glfwGetTime();
@@ -169,26 +96,9 @@ int main() {
         glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        cam.updateProjection(fov);
-        float rot = deltaTime / 10;
-        model *= glm::rotate(glm::mat4(1.f), glm::degrees(rot), glm::vec3(0, 0, 1));
-        std::array<glm::vec3, 3> camV = getCam(win);
-        cam.updateView(camV[0], camV[1], camV[2]);
 
-        //sh.uniform(cam);
-        //sh.uniform("projection", projection);
+        player.render();
 
-        tex.activate(0);
-        tex.bind();
-        cam.updateModel(model);
-        m.update(cam);
-        m.render();
-        tex2.activate(1);
-        tex2.bind();
-        cam.updateModel(model2);
-        m.update(cam);
-        m.render();
-        //glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(*indicies), GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();
     }

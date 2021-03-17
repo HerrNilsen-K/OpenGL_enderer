@@ -41,3 +41,13 @@ camera::camera(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &p
           m_zFar(100.f) {
 
 }
+
+void camera::updateAspect(float x, float y) {
+    m_aspectX = x;
+    m_aspectY = y;
+}
+
+void camera::updateAspect(uint16_t x, uint16_t y) {
+    m_aspectX = x;
+    m_aspectY = y;
+}

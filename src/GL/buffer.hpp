@@ -7,11 +7,18 @@
 
 #include <any>
 
+struct bufferData {
+    uint32_t size;
+    std::any data;
+};
+
+
 class buffer {
 public:
     buffer();
 
     void data(uint32_t size, std::any data) const;
+    void data(const bufferData &data) const;
 
     ~buffer();
 

@@ -92,3 +92,7 @@ void shader::uniform(const std::string_view &location, int p1) {
     use();
     glUniform1i(glGetUniformLocation(m_program, location.data()), p1);
 }
+
+void shader::attachShaderFile(const shaderPath &shaderPath) {
+    attachShaderFile(shaderPath.svertex, shaderPath.sfragment);
+}

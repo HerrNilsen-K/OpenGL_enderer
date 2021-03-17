@@ -26,3 +26,7 @@ void elementBuffer::bind() {
 uint32_t elementBuffer::getIndiciesSize() const {
     return m_indiciesSize;
 }
+
+void elementBuffer::data(const elementBufferData &data) {
+    this->data(data.size, data.data);
+}

@@ -21,3 +21,7 @@ void buffer::bind() const {
 buffer::~buffer() {
     glDeleteBuffers(1, &m_buffer);
 }
+
+void buffer::data(const bufferData &data) const {
+    this->data(data.size, data.data);
+}

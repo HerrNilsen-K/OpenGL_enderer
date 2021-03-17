@@ -9,10 +9,16 @@
 #include <cstdint>
 #include <any>
 
+struct elementBufferData {
+    uint32_t size;
+    std::any data;
+};
+
 class elementBuffer {
 public:
     elementBuffer();
     void data(uint32_t size, const std::any &data);
+    void data(const elementBufferData &data);
 
     void bind();
 

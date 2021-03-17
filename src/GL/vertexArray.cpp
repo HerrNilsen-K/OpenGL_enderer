@@ -23,3 +23,8 @@ vertexArray::~vertexArray() {
     glDeleteVertexArrays(1, &m_vertexArray);
 }
 
+void vertexArray::data(const vertexArrayData *data, uint8_t count) const {
+    for (int i = 0; i < count; ++i)
+        this->data(data[i].index, data[i].size, data[i].type, data[i].stride, data[i].poffset);
+}
+

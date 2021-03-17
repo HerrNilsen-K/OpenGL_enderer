@@ -4,9 +4,13 @@
 
 #include "mesh.hpp"
 
-mesh::mesh(const buffer &vbo, const elementBuffer &ebo, const vertexArray &vao, const shader &sh)
-        : m_buffer(vbo), m_elementBuffer(ebo),
-          m_vertexArray(vao), m_sh(sh) {}
+mesh::mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderPath &sh,
+           uint8_t vaoCount) {
+    m_buffer.data(vbo);
+    m_elementBuffer.data(ebo);
+    m_vertexArray.data(vao, vaoCount);
+    m_sh.attachShaderFile(sh);
+}
 
 void mesh::update(const camera &cam) {
     m_sh.uniform(cam);
