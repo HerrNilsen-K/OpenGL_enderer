@@ -4,6 +4,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include <iostream>
+#include <unordered_map>
 #include "sprite.hpp"
 
 //Helper function
@@ -22,6 +23,7 @@ sprite::sprite(const window &win)
             0, 1, 2,
             1, 2, 3
     };
+
     bufferData vbo{sizeof(vertecies), vertecies};
     vertexArrayData vao[] = {{0, 2, GL_FLOAT, sizeof(float) * 4, 0},
                              {1, 2, GL_FLOAT, sizeof(float) * 4, (void *) (sizeof(float) * 2)}};
@@ -36,7 +38,7 @@ sprite::sprite(const window &win)
     m_cam.updateAspect(static_cast<uint16_t>(x), static_cast<uint16_t>(y));
 
     auto[xScale, yScale] = getScaleFactor(10);
-    m_cam.updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale, yScale, 1))));
+    //m_cam.updateModel(glm::mat4(glm::scale(m_cam.getModel(), glm::vec3(xScale, yScale, 1))));
 }
 
 
@@ -51,6 +53,29 @@ camera &sprite::getCam() {
 }
 
 void sprite::stepX(float x) {
-    m_cam.updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(.5, .5, 1))) *
-                      glm::mat4(glm::translate(m_cam.getModel(), glm::vec3(x * 3, 1, 1))));
+    if (x == 0)
+        return;
+
+    //m_cam.updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(.5, .5, 1))) *
+    //                  glm::mat4(glm::translate(m_cam.getModel(), glm::vec3(x * 2 + 1, 0, 0))));
+
+
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            std::cout << m_cam.getModel()[i][j] << ' ';
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
+    m_cam.updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(0.1, 0.1, 0))) *
+                      glm::mat4(glm::translate(m_cam.getModel(), glm::vec3(x * 2, 0, 0))));
+
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            std::cout << m_cam.getModel()[i][j] << ' ';
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 }

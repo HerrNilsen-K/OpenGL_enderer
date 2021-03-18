@@ -87,6 +87,7 @@ int main() {
 
     sprite player(win);
     player.stepX(2);
+    //player.stepX(-1);
 
     sprite dummy(win);
     dummy.getCam().updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(.5, .5, 1))) *
