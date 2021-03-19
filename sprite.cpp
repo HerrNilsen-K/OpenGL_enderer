@@ -11,7 +11,7 @@
 constexpr auto getScaleFactor(uint64_t scale) { return std::make_tuple<float, float>(1.f / scale, 1.f / scale); }
 
 sprite::sprite(const window &win)
-        : m_winRef(const_cast<window &>(win)), m_posX(0.5f), m_posY(0.5f) {
+        : m_winRef(const_cast<window &>(win)), m_cam(), m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
     float vertecies[] = {
 
             -1, 1, 0, 1,
@@ -38,7 +38,7 @@ sprite::sprite(const window &win)
     m_cam.updateAspect(static_cast<uint16_t>(x), static_cast<uint16_t>(y));
 
     auto[xScale, yScale] = getScaleFactor(10);
-    m_cam.updateModel(glm::mat4(glm::scale(m_cam.getModel(), glm::vec3(xScale, yScale, 1))));
+    m_model = glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale, yScale, 1)));
 }
 
 
@@ -54,9 +54,10 @@ void sprite::stepX(float x) {
 
 void sprite::update() {
     auto[xScale, yScale] = getScaleFactor(10);
-    m_cam.updateModel(glm::translate(glm::mat4(1.f), glm::vec3(m_posX * xScale, m_posY * yScale, 0)) *
-                      glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale / 2, yScale / 2, 1))));
+    m_model = glm::translate(glm::mat4(1.f), glm::vec3(m_posX * xScale, m_posY * yScale, 0)) *
+              glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale / 2, yScale / 2, 1)));
 
+    m_mesh->setModel(m_model);
 }
 
 void sprite::stepY(float y) {

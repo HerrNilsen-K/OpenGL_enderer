@@ -19,6 +19,8 @@ public:
 
     void update(const camera &cam);
 
+    void setModel(const glm::mat4 &model);
+
     void render();
 
 private:

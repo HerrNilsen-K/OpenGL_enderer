@@ -83,7 +83,6 @@ void shader::attachShaderFile(const std::string_view &vertexFilePath, const std:
 }
 
 void shader::uniform(const camera &cam) {
-    uniform("model", cam.getModel());
     uniform("view", cam.getView());
     uniform("projection", cam.getProjection());
 }

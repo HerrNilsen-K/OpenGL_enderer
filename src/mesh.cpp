@@ -23,3 +23,7 @@ void mesh::render() {
     m_sh.use();
     glDrawElements(GL_TRIANGLES, m_elementBuffer.getIndiciesSize(), GL_UNSIGNED_INT, 0);
 }
+
+void mesh::setModel(const glm::mat4 &model) {
+    m_sh.uniform("model", model);
+}
