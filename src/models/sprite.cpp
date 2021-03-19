@@ -70,5 +70,9 @@ sprite::sprite()
 }
 
 void sprite::setColor(color col) {
-    m_mesh->getShader().uniform("col", col.r, col.g, col.b, col.a);
+    m_mesh->getShader().uniform("col",
+                                map(col.r, 0, 255, 0, 1),
+                                map(col.g, 0, 255, 0, 1),
+                                map(col.b, 0, 255, 0, 1),
+                                map(col.a, 0, 255, 0, 1));
 }

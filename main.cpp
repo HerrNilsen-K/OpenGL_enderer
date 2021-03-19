@@ -5,8 +5,6 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <array>
-#include <memory>
 #include "src/GL/buffer.hpp"
 #include "src/GL/vertexArray.hpp"
 #include "src/GL/shader.hpp"
@@ -95,7 +93,7 @@ int main() {
             field[i][j] = sprite(win);
             field[i][j].stepX(i);
             field[i][j].stepY(j);
-            field[i][j].setColor(color{static_cast<uint8_t>(i * 10), 0, static_cast<uint8_t>(j * 10), 0});
+            field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20), 0});
         }
 
 
@@ -116,7 +114,7 @@ int main() {
                 field[i][j].render();
             }
 
-        //std::cout << 1 / deltaTime << std::endl;
+        std::cout << 1 / deltaTime << std::endl;
 
         glfwPollEvents();
     }

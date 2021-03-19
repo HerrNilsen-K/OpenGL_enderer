@@ -27,7 +27,7 @@ public:
     void uniform(const std::string_view &location, int p1);
     void uniform(const std::string_view &location, float p1);
     void uniform(const std::string_view &location, float p1, float p2, float p3);
-    void uniform(const std::string_view &location, uint8_t p1, uint8_t p2, uint8_t p3, uint8_t p4);
+    void uniform(const std::string_view &location, float p1, float p2, float p3, float p4);
     void uniform(const std::string_view &location, const glm::mat4 &mat);
     void uniform(const camera &cam);
 
