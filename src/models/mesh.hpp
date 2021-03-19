@@ -6,11 +6,11 @@
 #define INC_3CARDRENDERER_MESH_HPP
 
 
-#include "GL/camera.hpp"
-#include "GL/shader.hpp"
-#include "GL/elementBuffer.hpp"
-#include "GL/buffer.hpp"
-#include "GL/vertexArray.hpp"
+#include "../GL/camera.hpp"
+#include "../GL/shader.hpp"
+#include "../GL/elementBuffer.hpp"
+#include "../GL/buffer.hpp"
+#include "../GL/vertexArray.hpp"
 
 class mesh {
 public:

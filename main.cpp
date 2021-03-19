@@ -12,10 +12,8 @@
 #include "src/GL/shader.hpp"
 #include "src/GL/elementBuffer.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "src/GL/texture.hpp"
-#include "src/mesh.hpp"
 #include "src/window.hpp"
-#include "sprite.hpp"
+#include "src/models/sprite.hpp"
 
 using namespace std;
 

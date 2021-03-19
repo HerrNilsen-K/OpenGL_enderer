@@ -6,8 +6,8 @@
 #define INC_3CARDRENDERER_SPRITE_HPP
 
 #include <memory>
-#include "src/mesh.hpp"
-#include "src/window.hpp"
+#include "mesh.hpp"
+#include "../window.hpp"
 
 
 class sprite {
