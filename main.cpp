@@ -90,10 +90,6 @@ int main() {
     player.stepX(-1);
     player.stepY(2);
 
-    sprite dummy(win);
-    dummy.getCam().updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(.5, .5, 1))) *
-                               glm::mat4(glm::translate(dummy.getCam().getModel(), glm::vec3(3, 3, 1))));
-
 
     while (!win.run()) {
         float currentFrame = glfwGetTime();
@@ -105,7 +101,6 @@ int main() {
 
         player.update();
         player.render();
-        dummy.render();
 
 
         glfwPollEvents();
