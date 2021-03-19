@@ -4,14 +4,15 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include <iostream>
-#include <unordered_map>
 #include "sprite.hpp"
+#include "../util.hpp"
 
 //Helper function
 constexpr auto getScaleFactor(uint64_t scale) { return std::make_tuple<float, float>(1.f / scale, 1.f / scale); }
 
 sprite::sprite(const window &win)
-        : m_winRef(const_cast<window &>(win)), m_cam(), m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
+        : m_cam(), m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
+
     float vertecies[] = {
 
             -1, 1, 0, 1,
@@ -28,13 +29,12 @@ sprite::sprite(const window &win)
     vertexArrayData vao[] = {{0, 2, GL_FLOAT, sizeof(float) * 4, 0},
                              {1, 2, GL_FLOAT, sizeof(float) * 4, (void *) (sizeof(float) * 2)}};
     elementBufferData ebo = {sizeof(indicies), indicies};
-    shaderPath sh = {R"(../shader.vert)", R"(../shader.frag)"};
+    shaderPath sh = {R"(../src/shader/shader.vert)", R"(../src/shader/shader.frag)"};
 
     m_mesh = std::make_unique<mesh>(vbo, ebo, vao, sh, 2);
 
-    m_winRef = win;
     int x, y;
-    glfwGetWindowSize(m_winRef.getHNDL(), &x, &y);
+    glfwGetWindowSize(win.getHNDL(), &x, &y);
     m_cam.updateAspect(static_cast<uint16_t>(x), static_cast<uint16_t>(y));
 
     auto[xScale, yScale] = getScaleFactor(10);
@@ -62,4 +62,13 @@ void sprite::update() {
 
 void sprite::stepY(float y) {
     m_posY += y;
+}
+
+sprite::sprite()
+        : m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
+
+}
+
+void sprite::setColor(color col) {
+    m_mesh->getShader().uniform("col", col.r, col.g, col.b, col.a);
 }

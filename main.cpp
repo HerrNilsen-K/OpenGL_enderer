@@ -88,6 +88,15 @@ int main() {
     player.stepX(-1);
     player.stepY(2);
 
+    sprite field[10][10];
+
+    for (int i = 0; i < 10; ++i)
+        for (int j = 0; j < 10; ++j) {
+            field[i][j] = sprite(win);
+            field[i][j].stepX(i);
+            field[i][j].stepY(j);
+            field[i][j].setColor(color{static_cast<uint8_t>(i * 10), 0, static_cast<uint8_t>(j * 10), 0});
+        }
 
 
     while (!win.run()) {
@@ -98,8 +107,14 @@ int main() {
         glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        player.update();
-        player.render();
+        //player.update();
+        //player.render();
+
+        for (int i = 0; i < 10; ++i)
+            for (int j = 0; j < 10; ++j) {
+                field[i][j].update();
+                field[i][j].render();
+            }
 
         //std::cout << 1 / deltaTime << std::endl;
 

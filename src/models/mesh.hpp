@@ -23,6 +23,8 @@ public:
 
     void render();
 
+    shader &getShader();
+
 private:
     buffer m_buffer;
     elementBuffer m_elementBuffer;

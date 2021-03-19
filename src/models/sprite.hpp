@@ -9,17 +9,19 @@
 #include "mesh.hpp"
 #include "../window.hpp"
 
+struct color;
 
 class sprite {
 private:
     std::unique_ptr<mesh> m_mesh;
     camera m_cam;
     glm::mat4 m_model;
-    window& m_winRef;
     float m_posX, m_posY;
 
 
 public:
+    sprite();
+
     explicit sprite(const window &win);
 
     void render();
@@ -30,6 +32,16 @@ public:
 
     void stepY(float y);
 
+    void setColor(color col);
+
+};
+
+
+struct color{
+    uint8_t r : 8;
+    uint8_t g : 8;
+    uint8_t b : 8;
+    uint8_t a : 8;
 };
 
 

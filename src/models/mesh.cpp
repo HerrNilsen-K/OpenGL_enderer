@@ -27,3 +27,7 @@ void mesh::render() {
 void mesh::setModel(const glm::mat4 &model) {
     m_sh.uniform("model", model);
 }
+
+shader &mesh::getShader(){
+    return m_sh;
+}
