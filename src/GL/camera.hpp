@@ -9,7 +9,6 @@
 
 class camera {
 private:
-    glm::mat4 m_model{};
     glm::mat4 m_view{};
     glm::mat4 m_projection{};
 
@@ -23,8 +22,6 @@ public:
 
     camera(const glm::mat4 &model, const glm::mat4 &view, const glm::mat4 &projection);
 
-    void updateModel(const glm::mat4 &model);
-
     void updateView(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &up);
 
     void updateProjection(float fov);
@@ -33,8 +30,6 @@ public:
     void updateAspect(float x, float y);
 
     void updateAspect(uint16_t x, uint16_t y);
-
-    glm::mat4 getModel() const;
 
     glm::mat4 getView() const;
 

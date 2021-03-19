@@ -1,5 +1,3 @@
-WINDOW CLASS
+EXTEND window helper --done-fornow
 
-
-
-OPENGL RENDERER --done
+REMOVE model matrix FROM camera class --done

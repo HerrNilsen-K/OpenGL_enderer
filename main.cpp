@@ -79,7 +79,7 @@ int main() {
     glfwSetFramebufferSizeCallback(win.getHNDL(), [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
     });
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     glewInit();
 
     glEnable(GL_DEBUG_OUTPUT);
@@ -89,6 +89,7 @@ int main() {
     player.stepX(3);
     player.stepX(-1);
     player.stepY(2);
+
 
 
     while (!win.run()) {
@@ -102,6 +103,7 @@ int main() {
         player.update();
         player.render();
 
+        //std::cout << 1 / deltaTime << std::endl;
 
         glfwPollEvents();
     }

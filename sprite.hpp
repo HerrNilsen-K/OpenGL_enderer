@@ -14,6 +14,7 @@ class sprite {
 private:
     std::unique_ptr<mesh> m_mesh;
     camera m_cam;
+    glm::mat4 m_model;
     window& m_winRef;
     float m_posX, m_posY;
 
