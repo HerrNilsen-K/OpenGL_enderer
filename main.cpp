@@ -91,6 +91,7 @@ int main() {
     player.stepY(2);
 
 
+
     while (!win.run()) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
