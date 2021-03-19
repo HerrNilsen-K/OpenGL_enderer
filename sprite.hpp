@@ -15,6 +15,7 @@ private:
     std::unique_ptr<mesh> m_mesh;
     camera m_cam;
     window& m_winRef;
+    float m_posX, m_posY;
 
 
 public:
@@ -22,7 +23,11 @@ public:
 
     void render();
 
+    void update();
+
     void stepX(float x);
+
+
 
     [[nodiscard]] camera &getCam();
 };
