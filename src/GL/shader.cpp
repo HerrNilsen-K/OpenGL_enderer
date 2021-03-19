@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include "shader.hpp"
+#include "../util.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
 shader::shader() {
@@ -68,14 +69,16 @@ void shader::uniform(const std::string_view &location, const glm::mat4 &mat) {
 
 void shader::attachShaderFile(const std::string_view &vertexFilePath, const std::string_view &fragmentFilePath) {
     std::ifstream getShader(vertexFilePath.data(), std::ios::in);
-    if(!getShader)
+    if(!getShader) {
         throw std::ifstream::failure("Couldn't open vertex source file");
+    }
     std::stringstream vertexSource;
     vertexSource << getShader.rdbuf();
     getShader.close();
     getShader.open(fragmentFilePath.data(), std::ios::in);
-    if(!getShader)
+    if(!getShader) {
         throw std::ifstream::failure("Couldn't open fragment source file");
+    }
     std::stringstream fragmentSource;
     fragmentSource << getShader.rdbuf();
 
@@ -94,4 +97,14 @@ void shader::uniform(const std::string_view &location, int p1) {
 
 void shader::attachShaderFile(const shaderPath &shaderPath) {
     attachShaderFile(shaderPath.svertex, shaderPath.sfragment);
+}
+
+void shader::uniform(const std::string_view &location, uint8_t p1, uint8_t p2, uint8_t p3, uint8_t p4) {
+    use();
+    double rResult = map(p1, 0, 255, 0, 1);
+    double gResult = map(p2, 0, 255, 0, 1);
+    double bResult = map(p3, 0, 255, 0, 1);
+    double aResult = map(p4, 0, 255, 0, 1);
+    std::cout << "r: " << rResult << std::endl;
+    glUniform4f(glGetUniformLocation(m_program, location.data()), rResult, gResult, bResult, aResult);
 }
