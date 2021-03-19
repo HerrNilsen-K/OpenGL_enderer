@@ -27,6 +27,7 @@ public:
 
     void stepX(float x);
 
+    void stepY(float y);
 
 
     [[nodiscard]] camera &getCam();

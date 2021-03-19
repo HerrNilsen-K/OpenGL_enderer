@@ -85,3 +85,7 @@ void sprite::update() {
     std::cout << std::endl;
 
 }
+
+void sprite::stepY(float y) {
+    m_posY += y;
+}

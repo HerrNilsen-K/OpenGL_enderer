@@ -86,9 +86,9 @@ int main() {
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
     sprite player(win);
-    player.stepX(4);
+    player.stepX(3);
     player.stepX(-1);
-    player.update();
+    player.stepY(2);
 
     sprite dummy(win);
     dummy.getCam().updateModel(glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(.5, .5, 1))) *
@@ -103,6 +103,7 @@ int main() {
         glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        player.update();
         player.render();
         dummy.render();
 
