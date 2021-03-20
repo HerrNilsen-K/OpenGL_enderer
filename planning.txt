@@ -1,3 +1,0 @@
-EXTEND window helper
-
-ADD color function picker

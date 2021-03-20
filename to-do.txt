@@ -1,0 +1,3 @@
+EXTEND window helper
+
+ADD recursive libraries (GLFW, GLEW, glm, stb)
