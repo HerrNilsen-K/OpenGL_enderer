@@ -1,5 +1,3 @@
 EXTEND window helper
 
-REFACTOR the project so it actually is header-only
-
 ADD recursive libraries (GLFW, GLEW, glm, stb)

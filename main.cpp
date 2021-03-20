@@ -5,11 +5,6 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "src/GL/buffer.hpp"
-#include "src/GL/vertexArray.hpp"
-#include "src/GL/shader.hpp"
-#include "src/GL/elementBuffer.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include "src/window.hpp"
 #include "src/models/sprite.hpp"
 

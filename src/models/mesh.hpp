@@ -6,11 +6,11 @@
 #define INC_3CARDRENDERER_MESH_HPP
 
 
-#include "../GL/camera.hpp"
-#include "../GL/shader.hpp"
 #include "../GL/elementBuffer.hpp"
 #include "../GL/buffer.hpp"
 #include "../GL/vertexArray.hpp"
+#include "../GL/shader.hpp"
+#include "../GL/camera.hpp"
 
 class mesh {
 public:
@@ -33,5 +33,32 @@ private:
 
 };
 
+inline mesh::mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderPath &sh,
+           uint8_t vaoCount) {
+    m_buffer.data(vbo);
+    m_elementBuffer.data(ebo);
+    m_vertexArray.data(vao, vaoCount);
+    m_sh.attachShaderFile(sh);
+}
+
+inline void mesh::update(const camera &cam) {
+    m_sh.uniform(cam);
+}
+
+inline void mesh::render() {
+    m_buffer.bind();
+    m_vertexArray.bind();
+    m_elementBuffer.bind();
+    m_sh.use();
+    glDrawElements(GL_TRIANGLES, m_elementBuffer.getIndiciesSize(), GL_UNSIGNED_INT, 0);
+}
+
+inline void mesh::setModel(const glm::mat4 &model) {
+    m_sh.uniform("model", model);
+}
+
+inline shader &mesh::getShader(){
+    return m_sh;
+}
 
 #endif //INC_3CARDRENDERER_MESH_HPP

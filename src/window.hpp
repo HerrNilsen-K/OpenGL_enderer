@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include <string>
+#include <stdexcept>
 
 class window {
 public:
@@ -35,5 +36,44 @@ private:
     std::string m_title;
 };
 
+inline void window::init() {
+    if (glfwInit() == GLFW_FALSE)
+        throw std::runtime_error("GLFW cannot be initilized!");
+}
+
+inline window::window(uint32_t width, uint32_t height, std::string title)
+        : m_win(nullptr), m_width(width),
+          m_height(height),
+          m_title(std::move(title)) {}
+
+inline void window::createWindow() {
+    m_win = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
+    if (!m_win)
+        throw std::runtime_error("GLFW window could not be created!");
+    glfwMakeContextCurrent(m_win);
+}
+
+inline window::~window() {
+    if (m_win)
+        destroyWindow();
+    glfwTerminate();
+}
+
+inline void window::destroyWindow() {
+    glfwDestroyWindow(m_win);
+    m_win = nullptr;
+}
+
+inline bool window::run() const {
+    return glfwWindowShouldClose(m_win);
+}
+
+inline window::windowHNDL window::getHNDL() const {
+    return m_win;
+}
+
+inline int window::getKey(int key) const {
+    return glfwGetKey(m_win, key);
+}
 
 #endif //INC_3CARDRENDERER_WINDOW_HPP
