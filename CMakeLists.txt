@@ -5,9 +5,19 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(${PROJECT_NAME} main.cpp src/models/sprite.hpp src/GL/vertexArray.hpp src/GL/shader.hpp src/GL/elementBuffer.hpp src/GL/texture.hpp src/GL/camera.hpp src/models/mesh.hpp src/window.hpp src/util.hpp)
 
-#add_executable(program main.cpp )
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-#target_link_libraries(program ${PROJECT_NAME})
+add_subdirectory(third-party/glfw)
+
+
 target_link_libraries(${PROJECT_NAME} GLEW)
 target_link_libraries(${PROJECT_NAME} OpenGL)
 target_link_libraries(${PROJECT_NAME} glfw)
+
+target_link_libraries(${PROJECT_NAME} glfw)
+
+find_package(OpenGL REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} OpenGL::GL)
