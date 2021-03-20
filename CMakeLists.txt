@@ -3,6 +3,8 @@ project(OpenGL_renderer)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include_directories(third-party/glew/include)
+
 add_executable(${PROJECT_NAME} main.cpp src/models/sprite.hpp src/GL/vertexArray.hpp src/GL/shader.hpp src/GL/elementBuffer.hpp src/GL/texture.hpp src/GL/camera.hpp src/models/mesh.hpp src/window.hpp src/util.hpp)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
