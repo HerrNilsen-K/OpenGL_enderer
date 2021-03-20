@@ -5,3 +5,5 @@ EXTEND window helper
 ADD examples
 
 ADD texture support
+
+REFACTOR sprite class for more performence

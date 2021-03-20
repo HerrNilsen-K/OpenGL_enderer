@@ -77,9 +77,7 @@ int main() {
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
     sprite player(win);
-    player.stepX(3);
-    player.stepX(-1);
-    player.stepY(2);
+    player.setColor(color{122, 122, 50});
 
     const std::size_t DIMENSION = 10;
     sprite<DIMENSION> field[DIMENSION][DIMENSION];
@@ -92,7 +90,7 @@ int main() {
             field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20)});
         }
 
-
+    const int MOVE_SPEED = 5;
     while (!win.run()) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -109,6 +107,18 @@ int main() {
                 field[i][j].update();
                 field[i][j].render();
             }
+
+        if (win.getKey(GLFW_KEY_W) == GLFW_PRESS)
+            player.stepY(deltaTime * MOVE_SPEED);
+        if (win.getKey(GLFW_KEY_S) == GLFW_PRESS)
+            player.stepY(-deltaTime * MOVE_SPEED);
+        if (win.getKey(GLFW_KEY_A) == GLFW_PRESS)
+            player.stepX(-deltaTime * MOVE_SPEED);
+        if (win.getKey(GLFW_KEY_D) == GLFW_PRESS)
+            player.stepX(deltaTime * MOVE_SPEED);
+
+        player.update();
+        player.render();
 
         std::cout << 1 / deltaTime << std::endl;
 
