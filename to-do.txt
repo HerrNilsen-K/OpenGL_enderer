@@ -1,3 +1,7 @@
 EXTEND window helper
+    ADD keyboad utility
+    ADD mouse utility
 
-ADD recursive libraries (GLFW, GLEW, glm, stb)
+ADD examples
+
+ADD texture support

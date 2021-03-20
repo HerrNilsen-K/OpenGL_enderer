@@ -9,9 +9,11 @@
 #include "mesh.hpp"
 #include "../window.hpp"
 #include "../util.hpp"
+#include "sprite.hpp"
 
 struct color;
 
+template<uint32_t X = 10, uint32_t Y = X>
 class sprite {
 private:
     std::unique_ptr<mesh> m_mesh;
@@ -39,16 +41,17 @@ public:
 
 
 struct color {
-    uint8_t r: 8;
-    uint8_t g: 8;
-    uint8_t b: 8;
-    uint8_t a: 8;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
 };
 
 //Helper function
-inline constexpr auto getScaleFactor(uint64_t scale) { return std::make_tuple<float, float>(1.f / scale, 1.f / scale); }
+inline constexpr auto getScaleFactor(uint64_t x, uint64_t y) { return std::make_tuple<float, float>(1.f / x, 1.f / y); }
 
-inline sprite::sprite(const window &win)
+template<uint32_t X, uint32_t Y>
+inline sprite<X, Y>::sprite(const window &win)
         : m_cam(), m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
 
     float vertecies[] = {
@@ -75,39 +78,45 @@ inline sprite::sprite(const window &win)
     glfwGetWindowSize(win.getHNDL(), &x, &y);
     m_cam.updateAspect(static_cast<uint16_t>(x), static_cast<uint16_t>(y));
 
-    auto[xScale, yScale] = getScaleFactor(10);
+    auto[xScale, yScale] = getScaleFactor(X, Y);
     m_model = glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale, yScale, 1)));
 }
 
 
-inline void sprite::render() {
+template<uint32_t X, uint32_t Y>
+inline void sprite<X, Y>::render() {
     m_cam.updateProjection(45.f);
     m_mesh->update(m_cam);
     m_mesh->render();
 }
 
-inline void sprite::stepX(float x) {
+template<uint32_t X, uint32_t Y>
+inline void sprite<X, Y>::stepX(float x) {
     m_posX += x;
 }
 
-inline void sprite::update() {
-    auto[xScale, yScale] = getScaleFactor(10);
+template<uint32_t X, uint32_t Y>
+inline void sprite<X, Y>::update() {
+    auto[xScale, yScale] = getScaleFactor(X, Y);
     m_model = glm::translate(glm::mat4(1.f), glm::vec3(m_posX * xScale, m_posY * yScale, 0)) *
               glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale / 2, yScale / 2, 1)));
 
     m_mesh->setModel(m_model);
 }
 
-inline void sprite::stepY(float y) {
+template<uint32_t X, uint32_t Y>
+inline void sprite<X, Y>::stepY(float y) {
     m_posY += y;
 }
 
-inline sprite::sprite()
+template<uint32_t X, uint32_t Y>
+inline sprite<X, Y>::sprite()
         : m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
 
 }
 
-inline void sprite::setColor(color col) {
+template<uint32_t X, uint32_t Y>
+inline void sprite<X, Y>::setColor(color col) {
     m_mesh->getShader().uniform("col",
                                 map(static_cast<float>(col.r), 0, 255, 0, 1),
                                 map(static_cast<float>(col.g), 0, 255, 0, 1),

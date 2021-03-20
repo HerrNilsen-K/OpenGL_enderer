@@ -81,14 +81,15 @@ int main() {
     player.stepX(-1);
     player.stepY(2);
 
-    sprite field[10][10];
+    const std::size_t DIMENSION = 10;
+    sprite<DIMENSION> field[DIMENSION][DIMENSION];
 
-    for (int i = 0; i < 10; ++i)
-        for (int j = 0; j < 10; ++j) {
-            field[i][j] = sprite(win);
+    for (int i = 0; i < DIMENSION; ++i)
+        for (int j = 0; j < DIMENSION; ++j) {
+            field[i][j] = sprite<DIMENSION>(win);
             field[i][j].stepX(i);
             field[i][j].stepY(j);
-            field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20), 0});
+            field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20)});
         }
 
 
@@ -103,8 +104,8 @@ int main() {
         //player.update();
         //player.render();
 
-        for (int i = 0; i < 10; ++i)
-            for (int j = 0; j < 10; ++j) {
+        for (int i = 0; i < DIMENSION; ++i)
+            for (int j = 0; j < DIMENSION; ++j) {
                 field[i][j].update();
                 field[i][j].render();
             }
