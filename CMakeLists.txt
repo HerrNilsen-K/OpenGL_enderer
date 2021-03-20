@@ -3,6 +3,9 @@ project(OpenGL_renderer)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(glew-cmake_BUID_STATIC ON)
+set(glew-cmake_BUILD_SHARED OFF)
+
 include_directories(third-party/glew/include)
 include_directories(third-party/glm)
 
@@ -12,12 +15,14 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
+
 add_subdirectory(third-party/glew)
 add_subdirectory(third-party/glfw)
 add_subdirectory(third-party/glm)
 
+find_package(GLEW)
 
-target_link_libraries(${PROJECT_NAME} GLEW)
+target_link_libraries(${PROJECT_NAME} libglew_static)
 #target_link_libraries(${PROJECT_NAME} OpenGL)
 target_link_libraries(${PROJECT_NAME} glfw)
 
