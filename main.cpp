@@ -63,9 +63,11 @@ void APIENTRY openglCallbackFunction(GLenum source,
 float deltaTime = 0.0f;    // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
+static constexpr int WINDOW_DIM = 600;
+
 int main() {
     window::init();
-    window win(600, 600);
+    window win(WINDOW_DIM, WINDOW_DIM);
     win.createWindow();
     glfwSetFramebufferSizeCallback(win.getHNDL(), [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
@@ -76,21 +78,30 @@ int main() {
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
-    sprite player(win);
-    //player.setColor(color{122, 122, 50});
-    player.image(R"(opengl_icon.jpg)");
+    glm::vec2 playerPos(4.5, 1);
+    dynamicSprite player(win);
+    player.setColor(color{122, 122, 50});
+
+    dynamicSprite<1, 1> background(win);
+    dynamicSprite<1, 5> floor(win);
+    floor.setColor(color{0, 255, 20});
+
 
     const std::size_t DIMENSION = 10;
-    sprite<DIMENSION> field[DIMENSION][DIMENSION];
+    dynamicSprite<DIMENSION> field[DIMENSION][DIMENSION];
+
 
     for (int i = 0; i < DIMENSION; ++i)
         for (int j = 0; j < DIMENSION; ++j) {
-            field[i][j] = sprite<DIMENSION>(win);
+            field[i][j] = dynamicSprite<DIMENSION>(win);
             field[i][j].stepX(i);
             field[i][j].stepY(j);
             field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20)});
         }
+    double time = glfwGetTime();
 
+    bool isJumping = false, isFalling = false;
+    double fallSpeed = 0;
     const int MOVE_SPEED = 5;
     while (!win.run()) {
         float currentFrame = glfwGetTime();
@@ -100,24 +111,53 @@ int main() {
         glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //player.update();
-        //player.render();
 
-        for (int i = 0; i < DIMENSION; ++i)
+        /*for (int i = 0; i < DIMENSION; ++i)
             for (int j = 0; j < DIMENSION; ++j) {
                 field[i][j].update();
                 field[i][j].render();
             }
+            */
+        background.update();
+        background.render();
+        floor.update();
+        floor.render();
 
-        if (win.getKey(GLFW_KEY_W) == GLFW_PRESS)
-            player.stepY(deltaTime * MOVE_SPEED);
-        if (win.getKey(GLFW_KEY_S) == GLFW_PRESS)
-            player.stepY(-deltaTime * MOVE_SPEED);
-        if (win.getKey(GLFW_KEY_A) == GLFW_PRESS)
-            player.stepX(-deltaTime * MOVE_SPEED);
-        if (win.getKey(GLFW_KEY_D) == GLFW_PRESS)
-            player.stepX(deltaTime * MOVE_SPEED);
+        if (win.getKey(GLFW_KEY_W) == GLFW_PRESS && !isFalling) {
+            //playerPos.y += deltaTime * MOVE_SPEED;
+            isJumping = true;
+        }
+        if (win.getKey(GLFW_KEY_S) == GLFW_PRESS) {
+            playerPos.y += -deltaTime * MOVE_SPEED;
+        }
+        if (win.getKey(GLFW_KEY_A) == GLFW_PRESS) {
+            playerPos.x += -deltaTime * MOVE_SPEED;
+        }
+        if (win.getKey(GLFW_KEY_D) == GLFW_PRESS) {
+            playerPos.x += deltaTime * MOVE_SPEED;
+        }
 
+        if (isJumping && !isFalling) {
+            fallSpeed = 0;
+            playerPos.y += deltaTime;
+            if (playerPos.y >= 2) {
+                isJumping = false;
+                isFalling = true;
+            }
+        }
+
+        if (isFalling && playerPos.y <= 1)
+            isFalling = false;
+
+        if (playerPos.y > 1 && isJumping == false) {
+            if (time - currentFrame <= .1) {
+                fallSpeed += deltaTime / 10;
+                time += .1;
+            }
+            playerPos.y -= fallSpeed;
+        }
+
+        player.setPos(playerPos);
         player.update();
         player.render();
 
