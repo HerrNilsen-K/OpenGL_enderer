@@ -10,13 +10,20 @@
 #include "../window.hpp"
 #include "../util.hpp"
 #include "sprite.hpp"
+#include "../GL/texture.hpp"
 
-struct color;
+struct color {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+};
 
 template<uint32_t X = 10, uint32_t Y = X>
 class sprite {
 private:
     std::unique_ptr<mesh> m_mesh;
+    texture m_tex;
     camera m_cam;
     glm::mat4 m_model;
     float m_posX, m_posY;
@@ -37,14 +44,7 @@ public:
 
     void setColor(color col);
 
-};
-
-
-struct color {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
+    void image(const std::string_view &path);
 };
 
 //Helper function
@@ -53,7 +53,6 @@ inline constexpr auto getScaleFactor(uint64_t x, uint64_t y) { return std::make_
 template<uint32_t X, uint32_t Y>
 inline sprite<X, Y>::sprite(const window &win)
         : m_cam(), m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
-
     float vertecies[] = {
 
             -1, 1, 0, 1,
@@ -80,6 +79,9 @@ inline sprite<X, Y>::sprite(const window &win)
 
     auto[xScale, yScale] = getScaleFactor(X, Y);
     m_model = glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale, yScale, 1)));
+
+    setColor(color{255, 255, 255, 0});
+
 }
 
 
@@ -122,6 +124,10 @@ inline void sprite<X, Y>::setColor(color col) {
                                 map(static_cast<float>(col.g), 0, 255, 0, 1),
                                 map(static_cast<float>(col.b), 0, 255, 0, 1),
                                 map(static_cast<float>(col.a), 0, 255, 0, 1));
+}
+
+template<uint32_t X, uint32_t Y>
+void sprite<X, Y>::image(const std::string_view &path) {
 }
 
 

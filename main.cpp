@@ -77,7 +77,8 @@ int main() {
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
     sprite player(win);
-    player.setColor(color{122, 122, 50});
+    //player.setColor(color{122, 122, 50});
+    player.image(R"(opengl_icon.jpg)");
 
     const std::size_t DIMENSION = 10;
     sprite<DIMENSION> field[DIMENSION][DIMENSION];

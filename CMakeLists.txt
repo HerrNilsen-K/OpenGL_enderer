@@ -21,8 +21,6 @@ add_subdirectory(third-party/glew)
 add_subdirectory(third-party/glfw)
 add_subdirectory(third-party/glm)
 
-find_package(GLEW)
-
 target_link_libraries(${PROJECT_NAME} libglew_static)
 target_link_libraries(${PROJECT_NAME} glfw)
 
