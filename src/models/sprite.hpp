@@ -9,7 +9,6 @@
 #include "mesh.hpp"
 #include "../window.hpp"
 #include "../util.hpp"
-#include "sprite.hpp"
 #include "../GL/texture.hpp"
 
 struct color {

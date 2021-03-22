@@ -62,15 +62,17 @@ void APIENTRY openglCallbackFunction(GLenum source,
     cout << "---------------------opengl-callback-end--------------" << endl;
 }
 
-double randomDouble(double from, double to){
+double randomDouble(double from, double to) {
     static std::random_device rd;
     static std::mt19937 mt(rd());
     std::uniform_real_distribution urd(from, to);
     return urd(mt);
 }
 
-float deltaTime = 0.0f;    // Time between current frame and last frame
-float lastFrame = 0.0f; // Time of last frame
+
+class collisionBox {
+    double x, y;
+};
 
 static constexpr int WINDOW_DIM = 600;
 
@@ -108,15 +110,17 @@ int main() {
             field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20)});
         }
 
-    double lastTime = glfwGetTime();
+    double oldTimeSinceStart = 0;
+    double stopWatch = glfwGetTime();
 
     std::vector<dynamicSprite<10, 11>> bricks;
 
-    const int MOVE_SPEED = 5, FALL_SPEED = 2 / 1000;
+    const int MOVE_SPEED = 5, FALL_SPEED = -2;
+    const double TIME_TILL_BRICK_SPAWN = 1.5;
     while (!win.run()) {
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        double timeSinceStart = glfwGetTime();
+        double deltaTime = timeSinceStart - oldTimeSinceStart;
+        oldTimeSinceStart = timeSinceStart;
 
         glfwSwapBuffers(win.getHNDL());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -140,10 +144,10 @@ int main() {
             playerPos.x += deltaTime * MOVE_SPEED;
         }
 
-        if (lastTime - currentFrame <= 1) {
-            lastTime += 1;
+        if (stopWatch - timeSinceStart <= TIME_TILL_BRICK_SPAWN) {
+            stopWatch += TIME_TILL_BRICK_SPAWN;
             bricks.emplace_back(win);
-            bricks.back().setPos(glm::vec2(randomDouble(0, 10), 2));
+            bricks.back().setPos(glm::vec2(randomDouble(0, 10), 12));
             bricks.back().setColor(color{247, 47, 7});
         }
 
