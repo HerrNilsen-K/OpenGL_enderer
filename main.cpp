@@ -5,6 +5,8 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <vector>
+#include <random>
 #include "src/window.hpp"
 #include "src/models/sprite.hpp"
 
@@ -60,6 +62,13 @@ void APIENTRY openglCallbackFunction(GLenum source,
     cout << "---------------------opengl-callback-end--------------" << endl;
 }
 
+double randomDouble(double from, double to){
+    static std::random_device rd;
+    static std::mt19937 mt(rd());
+    std::uniform_real_distribution urd(from, to);
+    return urd(mt);
+}
+
 float deltaTime = 0.0f;    // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
@@ -98,11 +107,12 @@ int main() {
             field[i][j].stepY(j);
             field[i][j].setColor(color{static_cast<uint8_t>(i * 20), 0, static_cast<uint8_t>(j * 20)});
         }
-    double time = glfwGetTime();
 
-    bool isJumping = false, isFalling = false;
-    double fallSpeed = 0;
-    const int MOVE_SPEED = 5;
+    double lastTime = glfwGetTime();
+
+    std::vector<dynamicSprite<10, 11>> bricks;
+
+    const int MOVE_SPEED = 5, FALL_SPEED = 2 / 1000;
     while (!win.run()) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -123,38 +133,24 @@ int main() {
         floor.update();
         floor.render();
 
-        if (win.getKey(GLFW_KEY_W) == GLFW_PRESS && !isFalling) {
-            //playerPos.y += deltaTime * MOVE_SPEED;
-            isJumping = true;
-        }
-        if (win.getKey(GLFW_KEY_S) == GLFW_PRESS) {
-            playerPos.y += -deltaTime * MOVE_SPEED;
-        }
-        if (win.getKey(GLFW_KEY_A) == GLFW_PRESS) {
+        if (win.getKey(GLFW_KEY_A) == GLFW_PRESS && playerPos.x >= .5) {
             playerPos.x += -deltaTime * MOVE_SPEED;
         }
-        if (win.getKey(GLFW_KEY_D) == GLFW_PRESS) {
+        if (win.getKey(GLFW_KEY_D) == GLFW_PRESS && playerPos.x <= 9.5) {
             playerPos.x += deltaTime * MOVE_SPEED;
         }
 
-        if (isJumping && !isFalling) {
-            fallSpeed = 0;
-            playerPos.y += deltaTime;
-            if (playerPos.y >= 2) {
-                isJumping = false;
-                isFalling = true;
-            }
+        if (lastTime - currentFrame <= 1) {
+            lastTime += 1;
+            bricks.emplace_back(win);
+            bricks.back().setPos(glm::vec2(randomDouble(0, 10), 2));
+            bricks.back().setColor(color{247, 47, 7});
         }
 
-        if (isFalling && playerPos.y <= 1)
-            isFalling = false;
-
-        if (playerPos.y > 1 && isJumping == false) {
-            if (time - currentFrame <= .1) {
-                fallSpeed += deltaTime / 10;
-                time += .1;
-            }
-            playerPos.y -= fallSpeed;
+        for (auto &&i : bricks) {
+            i.stepY(FALL_SPEED * deltaTime);
+            i.update();
+            i.render();
         }
 
         player.setPos(playerPos);
