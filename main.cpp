@@ -71,7 +71,19 @@ double randomDouble(double from, double to) {
 
 
 class collisionBox {
-    double x, y;
+    double m_x, m_y, m_w, m_h;
+public:
+    collisionBox(double x, double y, double w, double h)
+            : m_x(x), m_y(y), m_w(w), m_h(h) {}
+
+    bool checkCollision(const collisionBox &&box) {
+        bool result =
+                this->m_x + this->m_w >= box.m_x &&
+                this->m_x <= box.m_x + box.m_w &&
+                this->m_y + this->m_h >= box.m_y &&
+                this->m_y <= box.m_y + box.m_h;
+        return result;
+    }
 };
 
 static constexpr int WINDOW_DIM = 600;
@@ -113,7 +125,7 @@ int main() {
     double oldTimeSinceStart = 0;
     double stopWatch = glfwGetTime();
 
-    std::vector<dynamicSprite<10, 11>> bricks;
+    std::vector<std::pair<dynamicSprite<10, 11>, collisionBox>> bricks;
 
     const int MOVE_SPEED = 5, FALL_SPEED = -2;
     const double TIME_TILL_BRICK_SPAWN = 1.5;
@@ -146,15 +158,15 @@ int main() {
 
         if (stopWatch - timeSinceStart <= TIME_TILL_BRICK_SPAWN) {
             stopWatch += TIME_TILL_BRICK_SPAWN;
-            bricks.emplace_back(win);
-            bricks.back().setPos(glm::vec2(randomDouble(0, 10), 12));
-            bricks.back().setColor(color{247, 47, 7});
+            bricks.emplace_back(std::make_pair(dynamicSprite<10, 11>(win), collisionBox(1, 1, 1, 1)));
+            bricks.back().first.setPos(glm::vec2(randomDouble(0, 10), 12));
+            bricks.back().first.setColor(color{247, 47, 7});
         }
 
         for (auto &&i : bricks) {
-            i.stepY(FALL_SPEED * deltaTime);
-            i.update();
-            i.render();
+            i.first.stepY(FALL_SPEED * deltaTime);
+            i.first.update();
+            i.first.render();
         }
 
         player.setPos(playerPos);
