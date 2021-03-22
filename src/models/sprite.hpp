@@ -41,6 +41,10 @@ public:
 
     void stepY(float y);
 
+    float getX() const;
+
+    float getY() const;
+
     void setPos(const glm::vec2 &pos);
 
     void setColor(color col);
@@ -130,6 +134,16 @@ template<uint32_t X, uint32_t Y>
 void dynamicSprite<X, Y>::setPos(const glm::vec2 &pos) {
     m_posX = pos.x;
     m_posY = pos.y;
+}
+
+template<uint32_t X, uint32_t Y>
+float dynamicSprite<X, Y>::getX() const {
+    return m_posX;
+}
+
+template<uint32_t X, uint32_t Y>
+float dynamicSprite<X, Y>::getY() const {
+    return m_posY;
 }
 
 #endif //INC_3CARDRENDERER_SPRITE_HPP

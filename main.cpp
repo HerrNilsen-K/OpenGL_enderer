@@ -76,12 +76,18 @@ public:
     collisionBox(double x, double y, double w, double h)
             : m_x(x), m_y(y), m_w(w), m_h(h) {}
 
-    bool checkCollision(const collisionBox &&box) {
+    [[nodiscard]] bool checkCollision(const collisionBox &box) const {
+        // bool result =
+        //         this->m_x + this->m_w >= box.m_x &&
+        //         this->m_x <= box.m_x + box.m_w ||
+        //         this->m_y + this->m_h >= box.m_y &&
+        //         this->m_y <= box.m_y + box.m_h;
+
         bool result =
-                this->m_x + this->m_w >= box.m_x &&
-                this->m_x <= box.m_x + box.m_w &&
-                this->m_y + this->m_h >= box.m_y &&
-                this->m_y <= box.m_y + box.m_h;
+                m_x + m_w > box.m_x &&
+                m_x < box.m_x + box.m_w &&
+                m_y > box.m_y + box.m_h &&
+                m_y + m_h < box.m_y;
         return result;
     }
 };
@@ -95,15 +101,16 @@ int main() {
     glfwSetFramebufferSizeCallback(win.getHNDL(), [](GLFWwindow *win, int w, int h) {
         glViewport(0, 0, w, h);
     });
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
     glewInit();
 
-    glEnable(GL_DEBUG_OUTPUT);
+    //glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(openglCallbackFunction, nullptr);
 
     glm::vec2 playerPos(4.5, 1);
-    dynamicSprite player(win);
-    player.setColor(color{122, 122, 50});
+    std::pair<dynamicSprite<10>, collisionBox> player = std::pair<dynamicSprite<10>, collisionBox>(win, collisionBox(
+            playerPos.x, playerPos.y, 1. / 10, 1. / 10));
+    player.first.setColor(color{122, 122, 50});
 
     dynamicSprite<1, 1> background(win);
     dynamicSprite<1, 5> floor(win);
@@ -126,6 +133,11 @@ int main() {
     double stopWatch = glfwGetTime();
 
     std::vector<std::pair<dynamicSprite<10, 11>, collisionBox>> bricks;
+    std::pair<dynamicSprite<10, 10>, collisionBox> dummy =
+            std::pair<dynamicSprite<10, 10>, collisionBox>(win, collisionBox(5 , 5 , 1. / 10, 1. / 10));
+    dummy.first.setColor(color{1, 1, 0});
+
+    dummy.first.setPos(glm::vec2(5, 5));
 
     const int MOVE_SPEED = 5, FALL_SPEED = -2;
     const double TIME_TILL_BRICK_SPAWN = 1.5;
@@ -157,23 +169,44 @@ int main() {
         }
 
         if (stopWatch - timeSinceStart <= TIME_TILL_BRICK_SPAWN) {
-            stopWatch += TIME_TILL_BRICK_SPAWN;
-            bricks.emplace_back(std::make_pair(dynamicSprite<10, 11>(win), collisionBox(1, 1, 1, 1)));
-            bricks.back().first.setPos(glm::vec2(randomDouble(0, 10), 12));
-            bricks.back().first.setColor(color{247, 47, 7});
+            //stopWatch += TIME_TILL_BRICK_SPAWN;
+            //bricks.emplace_back(std::make_pair(dynamicSprite<10, 11>(win), collisionBox(0, 0, 0, 0)));
+            //double position = randomDouble(0, 10);
+            //bricks.back().first.setPos(glm::vec2(position, 12));
+            //bricks.back().second = collisionBox(position, 12, 1. / 10, 1. / 11);
+            //bricks.back().first.setColor(color{247, 47, 7});
         }
 
         for (auto &&i : bricks) {
             i.first.stepY(FALL_SPEED * deltaTime);
+            i.second = collisionBox(i.first.getX(), i.first.getY() + FALL_SPEED * deltaTime, 1. / 10, 1. / 11);
             i.first.update();
             i.first.render();
+            if (i.second.checkCollision(player.second)) {
+
+            }
         }
 
-        player.setPos(playerPos);
-        player.update();
-        player.render();
+        dummy.first.update();
+        dummy.first.render();
 
-        std::cout << 1 / deltaTime << std::endl;
+        if(win.getKey(GLFW_KEY_F))
+            std::cout << "F";
+
+        double x, y;
+        glfwGetCursorPos(win.getHNDL(), &x, &y);
+        playerPos = glm::vec2(map(x, 0, 600, 0, 10), 10 + -map(y, 0, 600, 0, 10));
+        std::cout << playerPos.x << ' ' << playerPos.y << std::endl;
+
+        player.first.setPos(playerPos);
+        player.second = collisionBox(playerPos.x + -.5, playerPos.y + -.5, 1. / 10, 1. / 10);
+        player.first.update();
+        player.first.render();
+
+        if (player.second.checkCollision(dummy.second))
+            std::cout << "Yes" << std::endl;
+
+        //std::cout << 1 / deltaTime << std::endl;
 
         glfwPollEvents();
     }
