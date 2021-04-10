@@ -10,7 +10,7 @@ include_directories(third-party/glew/include)
 include_directories(third-party/glm)
 include_directories(third-party/stb)
 
-add_executable(${PROJECT_NAME} main.cpp src/models/sprite.hpp src/GL/vertexArray.hpp src/GL/shader.hpp src/GL/elementBuffer.hpp src/GL/texture.hpp src/GL/camera.hpp src/models/mesh.hpp src/window.hpp src/util.hpp)
+add_library(${PROJECT_NAME} INTERFACE)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -21,11 +21,9 @@ add_subdirectory(third-party/glew)
 add_subdirectory(third-party/glfw)
 add_subdirectory(third-party/glm)
 
-find_package(GLEW)
-
-target_link_libraries(${PROJECT_NAME} libglew_static)
-target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} INTERFACE libglew_static)
+target_link_libraries(${PROJECT_NAME} INTERFACE glfw)
 
 find_package(OpenGL REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} INTERFACE OpenGL::GL)
