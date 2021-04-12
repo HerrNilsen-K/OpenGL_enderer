@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(OpenGL_renderer)
+project(renderer)
 
 set(CMAKE_CXX_STANDARD 20)
 

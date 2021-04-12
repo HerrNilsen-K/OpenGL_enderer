@@ -67,7 +67,36 @@ inline sprite::sprite(const window &win)
     vertexArrayData vao[] = {{0, 2, GL_FLOAT, sizeof(float) * 4, 0},
                              {1, 2, GL_FLOAT, sizeof(float) * 4, (void *) (sizeof(float) * 2)}};
     elementBufferData ebo = {sizeof(indicies), indicies};
-    shaderPath sh = {R"(../src/shader/shader.vert)", R"(../src/shader/shader.frag)"};
+    shaderData sh = {false,
+                     "#version 330 core\n"
+                     "\n"
+                     "layout(location = 0) in vec2 position;\n"
+                     "layout(location = 1) in vec2 aTexPos;\n"
+                     "\n"
+                     "uniform mat4 model;\n"
+                     "uniform mat4 view;\n"
+                     "uniform mat4 projection;\n"
+                     "\n"
+                     "out vec2 texPos;\n"
+                     "\n"
+                     "void main(){\n"
+                     "    gl_Position = projection * view * model * vec4(position, 0, 1);\n"
+                     "    texPos = aTexPos;\n"
+                     "}\n",
+
+                     "#version 330 core\n"
+                     "\n"
+                     "layout(location = 0) out vec4 color;\n"
+                     "in vec2 texPos;\n"
+                     "uniform sampler2D tex;\n"
+                     "\n"
+                     "uniform vec4 col;\n"
+                     "\n"
+                     "void main(){\n"
+                     "	color = vec4(col);\n"
+                     "    //color = texture(tex, texPos);\n"
+                     "}\n"
+    };
 
     m_mesh = std::make_unique<mesh>(vbo, ebo, vao, sh, 2);
 
