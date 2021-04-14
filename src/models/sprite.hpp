@@ -9,29 +9,21 @@
 #include "mesh.hpp"
 #include "../window.hpp"
 #include "../util.hpp"
-#include "../GL/texture.hpp"
 
-struct color {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
-};
+struct color;
 
-template<uint32_t X = 10, uint32_t Y = X>
-class dynamicSprite {
+class sprite {
 private:
     std::unique_ptr<mesh> m_mesh;
-    texture m_tex;
     camera m_cam;
     glm::mat4 m_model;
     float m_posX, m_posY;
 
 
 public:
-    dynamicSprite();
+    sprite();
 
-    explicit dynamicSprite(const window &win);
+    explicit sprite(const window &win);
 
     void render();
 
@@ -41,22 +33,24 @@ public:
 
     void stepY(float y);
 
-    float getX() const;
-
-    float getY() const;
-
-    void setPos(const glm::vec2 &pos);
-
     void setColor(color col);
 
 };
 
-//Helper function
-inline constexpr auto getScaleFactor(uint64_t x, uint64_t y) { return std::make_tuple<float, float>(1.f / x, 1.f / y); }
 
-template<uint32_t X, uint32_t Y>
-inline dynamicSprite<X, Y>::dynamicSprite(const window &win)
+struct color {
+    uint8_t r: 8;
+    uint8_t g: 8;
+    uint8_t b: 8;
+    uint8_t a: 8;
+};
+
+//Helper function
+inline constexpr auto getScaleFactor(uint64_t scale) { return std::make_tuple<float, float>(1.f / scale, 1.f / scale); }
+
+inline sprite::sprite(const window &win)
         : m_cam(), m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
+
     float vertecies[] = {
 
             -1, 1, 0, 1,
@@ -73,7 +67,36 @@ inline dynamicSprite<X, Y>::dynamicSprite(const window &win)
     vertexArrayData vao[] = {{0, 2, GL_FLOAT, sizeof(float) * 4, 0},
                              {1, 2, GL_FLOAT, sizeof(float) * 4, (void *) (sizeof(float) * 2)}};
     elementBufferData ebo = {sizeof(indicies), indicies};
-    shaderPath sh = {R"(../src/shader/dynamicSprite.vert)", R"(../src/shader/dynamicSprite.frag)"};
+    shaderData sh = {false,
+                     "#version 330 core\n"
+                     "\n"
+                     "layout(location = 0) in vec2 position;\n"
+                     "layout(location = 1) in vec2 aTexPos;\n"
+                     "\n"
+                     "uniform mat4 model;\n"
+                     "uniform mat4 view;\n"
+                     "uniform mat4 projection;\n"
+                     "\n"
+                     "out vec2 texPos;\n"
+                     "\n"
+                     "void main(){\n"
+                     "    gl_Position = projection * view * model * vec4(position, 0, 1);\n"
+                     "    texPos = aTexPos;\n"
+                     "}\n",
+
+                     "#version 330 core\n"
+                     "\n"
+                     "layout(location = 0) out vec4 color;\n"
+                     "in vec2 texPos;\n"
+                     "uniform sampler2D tex;\n"
+                     "\n"
+                     "uniform vec4 col;\n"
+                     "\n"
+                     "void main(){\n"
+                     "	color = vec4(col);\n"
+                     "    //color = texture(tex, texPos);\n"
+                     "}\n"
+    };
 
     m_mesh = std::make_unique<mesh>(vbo, ebo, vao, sh, 2);
 
@@ -81,48 +104,39 @@ inline dynamicSprite<X, Y>::dynamicSprite(const window &win)
     glfwGetWindowSize(win.getHNDL(), &x, &y);
     m_cam.updateAspect(static_cast<uint16_t>(x), static_cast<uint16_t>(y));
 
-    auto[xScale, yScale] = getScaleFactor(X, Y);
+    auto[xScale, yScale] = getScaleFactor(10);
     m_model = glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale, yScale, 1)));
-
-    setColor(color{255, 255, 255, 0});
-
 }
 
 
-template<uint32_t X, uint32_t Y>
-inline void dynamicSprite<X, Y>::render() {
+inline void sprite::render() {
     m_cam.updateProjection(45.f);
     m_mesh->update(m_cam);
     m_mesh->render();
 }
 
-template<uint32_t X, uint32_t Y>
-inline void dynamicSprite<X, Y>::stepX(float x) {
+inline void sprite::stepX(float x) {
     m_posX += x;
 }
 
-template<uint32_t X, uint32_t Y>
-inline void dynamicSprite<X, Y>::update() {
-    auto[xScale, yScale] = getScaleFactor(X, Y);
+inline void sprite::update() {
+    auto[xScale, yScale] = getScaleFactor(10);
     m_model = glm::translate(glm::mat4(1.f), glm::vec3(m_posX * xScale, m_posY * yScale, 0)) *
               glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale / 2, yScale / 2, 1)));
 
     m_mesh->setModel(m_model);
 }
 
-template<uint32_t X, uint32_t Y>
-inline void dynamicSprite<X, Y>::stepY(float y) {
+inline void sprite::stepY(float y) {
     m_posY += y;
 }
 
-template<uint32_t X, uint32_t Y>
-inline dynamicSprite<X, Y>::dynamicSprite()
+inline sprite::sprite()
         : m_posX(0.5f), m_posY(0.5f), m_model(1.f) {
 
 }
 
-template<uint32_t X, uint32_t Y>
-inline void dynamicSprite<X, Y>::setColor(color col) {
+inline void sprite::setColor(color col) {
     m_mesh->getShader().uniform("col",
                                 map(static_cast<float>(col.r), 0, 255, 0, 1),
                                 map(static_cast<float>(col.g), 0, 255, 0, 1),
@@ -130,20 +144,5 @@ inline void dynamicSprite<X, Y>::setColor(color col) {
                                 map(static_cast<float>(col.a), 0, 255, 0, 1));
 }
 
-template<uint32_t X, uint32_t Y>
-void dynamicSprite<X, Y>::setPos(const glm::vec2 &pos) {
-    m_posX = pos.x;
-    m_posY = pos.y;
-}
-
-template<uint32_t X, uint32_t Y>
-float dynamicSprite<X, Y>::getX() const {
-    return m_posX;
-}
-
-template<uint32_t X, uint32_t Y>
-float dynamicSprite<X, Y>::getY() const {
-    return m_posY;
-}
 
 #endif //INC_3CARDRENDERER_SPRITE_HPP

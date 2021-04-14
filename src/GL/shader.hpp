@@ -16,7 +16,8 @@
 
 #include "camera.hpp"
 
-struct shaderPath {
+struct shaderData {
+    bool isPath;
     std::string_view svertex;
     std::string_view sfragment;
 };
@@ -31,7 +32,7 @@ public:
 
     void attachShaderFile(const std::string_view &vertexFilePath, const std::string_view &fragmentFilePath);
 
-    void attachShaderFile(const shaderPath &shaderPath);
+    void attachShaderFile(const shaderData &shaderData);
 
     void uniform(const std::string_view &location, int p1);
 
@@ -137,14 +138,16 @@ inline void shader::uniform(const std::string_view &location, int p1) {
     glUniform1i(glGetUniformLocation(m_program, location.data()), p1);
 }
 
-inline void shader::attachShaderFile(const shaderPath &shaderPath) {
-    attachShaderFile(shaderPath.svertex, shaderPath.sfragment);
+inline void shader::attachShaderFile(const shaderData &shaderData) {
+    if (shaderData.isPath)
+        attachShaderFile(shaderData.svertex, shaderData.sfragment);
+    else
+        attachShader(shaderData.svertex, shaderData.sfragment);
 }
 
 inline void shader::uniform(const std::string_view &location, float p1, float p2, float p3, float p4) {
     use();
     glUniform4f(glGetUniformLocation(m_program, location.data()), p1, p2, p3, p4);
 }
-
 
 #endif //INC_3CARDRENDERER_SHADER_HPP

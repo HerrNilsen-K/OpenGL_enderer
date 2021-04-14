@@ -14,7 +14,7 @@
 
 class mesh {
 public:
-    mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderPath &sh,
+    mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderData &sh,
          uint8_t vaoCount = 1);
 
     void update(const camera &cam);
@@ -33,7 +33,7 @@ private:
 
 };
 
-inline mesh::mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderPath &sh,
+inline mesh::mesh(const bufferData &vbo, const elementBufferData &ebo, const vertexArrayData *vao, const shaderData &sh,
            uint8_t vaoCount) {
     m_buffer.data(vbo);
     m_elementBuffer.data(ebo);
