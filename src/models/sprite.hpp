@@ -18,6 +18,7 @@ private:
     camera m_cam;
     glm::mat4 m_model;
     float m_posX, m_posY;
+    float m_deg = 0;
 
 
 public:
@@ -35,6 +36,9 @@ public:
 
     void setColor(color col);
 
+    void rotate(float deg);
+
+    glm::vec2 getPos() const;
 };
 
 
@@ -98,7 +102,13 @@ inline sprite::sprite(const window &win)
                      "}\n"
     };
 
-    m_mesh = std::make_unique<mesh>(vbo, ebo, vao, sh, 2);
+    shaderData path{
+            true,
+            R"(../OpenGL_renderer/src/shader/shader.vert)",
+            R"(../OpenGL_renderer/src/shader/shader.frag)"
+    };
+
+    m_mesh = std::make_unique<mesh>(vbo, ebo, vao, path, 2);
 
     int x, y;
     glfwGetWindowSize(win.getHNDL(), &x, &y);
@@ -121,10 +131,17 @@ inline void sprite::stepX(float x) {
 
 inline void sprite::update() {
     auto[xScale, yScale] = getScaleFactor(10);
+    /*m_model = glm::translate(glm::mat4(1.f), glm::vec3(m_posX * xScale, m_posY * yScale, 0)) *
+              glm::rotate(glm::mat4(.1f), m_deg, glm::vec3(0, 1, 0)) *
+              glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale / 2, yScale / 2, 1)));
+              */
     m_model = glm::translate(glm::mat4(1.f), glm::vec3(m_posX * xScale, m_posY * yScale, 0)) *
               glm::mat4(glm::scale(glm::mat4(1.f), glm::vec3(xScale / 2, yScale / 2, 1)));
-
     m_mesh->setModel(m_model);
+
+    std::string posCentre = "centre";
+    m_mesh->getShader().uniform(posCentre, m_posX / 10, m_posY / 10);
+    //std::cout << m_posY / 10 << ' ' << m_posX / 10 << std::endl;
 }
 
 inline void sprite::stepY(float y) {
@@ -142,6 +159,14 @@ inline void sprite::setColor(color col) {
                                 map(static_cast<float>(col.g), 0, 255, 0, 1),
                                 map(static_cast<float>(col.b), 0, 255, 0, 1),
                                 map(static_cast<float>(col.a), 0, 255, 0, 1));
+}
+
+void sprite::rotate(float deg) {
+    m_deg = deg;
+}
+
+glm::vec2 sprite::getPos() const {
+    return glm::vec2(m_posX, m_posY);
 }
 
 

@@ -38,6 +38,8 @@ public:
 
     void uniform(const std::string_view &location, float p1);
 
+    void uniform(const std::string_view &location, float p1, float p2);
+
     void uniform(const std::string_view &location, float p1, float p2, float p3);
 
     void uniform(const std::string_view &location, float p1, float p2, float p3, float p4);
@@ -71,18 +73,25 @@ shader::attachShader(const std::string_view &vertexShaderSource, const std::stri
     glShaderSource(vertexShader, 1, &tempVert, nullptr);
     glCompileShader(vertexShader);
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-        std::cerr << "Vertex F" << std::endl;
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
 
     const char *tempFrag = fragmentShaderSource.data();
-    glShaderSource(fragmentShader, 1, &tempFrag, nullptr);
+    glShaderSource(fragmentShader,
+                   1, &tempFrag, nullptr);
     glCompileShader(fragmentShader);
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-        std::cerr << "Fragment F" << std::endl;
-
-    glAttachShader(m_program, vertexShader);
-    glAttachShader(m_program, fragmentShader);
+    glGetShaderiv(fragmentShader,
+                  GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    glAttachShader(m_program, vertexShader
+    );
+    glAttachShader(m_program, fragmentShader
+    );
 
     glLinkProgram(m_program);
 
@@ -148,6 +157,11 @@ inline void shader::attachShaderFile(const shaderData &shaderData) {
 inline void shader::uniform(const std::string_view &location, float p1, float p2, float p3, float p4) {
     use();
     glUniform4f(glGetUniformLocation(m_program, location.data()), p1, p2, p3, p4);
+}
+
+inline void shader::uniform(const std::string_view &location, float p1, float p2) {
+    use();
+    glUniform2f(glGetUniformLocation(m_program, location.data()), p1, p2);
 }
 
 #endif //INC_3CARDRENDERER_SHADER_HPP
